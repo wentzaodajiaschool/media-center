@@ -4,14 +4,15 @@ body {
 }
 
 .card {
-  border-radius: 15px; /* 增加圓角 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加陰影 */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* 平滑過渡效果 */
+  cursor: pointer;
+  border-radius: 15px !important; /* 增加圓角 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important; /* 添加陰影 */
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important; /* 平滑過渡效果 */
 }
 
 .card:hover {
-  transform: translateY(-5px); /* 滑鼠懸停時上移，產生浮起效果 */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* 懸停時增加陰影 */
+  transform: translateY(-5px) !important; /* 滑鼠懸停時上移，產生浮起效果 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important; /* 懸停時增加陰影 */
 }
 
 .btn-outline-primary {
@@ -150,13 +151,13 @@ body {
 
 /* 專輯卡片的初始樣式 */
 .card-animate {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  opacity: 0 !important;
+  transform: translateY(5px) !important;
+  transition: opacity 0.5s ease, transform 0.5s ease !important;
 }
 
 /* 專輯卡片的動畫結束樣式 */
 .card-animate.show {
-  opacity: 1;
+  opacity: 1 !important;
   transform: translateY(0);
 }
