@@ -1,26 +1,4 @@
 $(document).ready(function () {
-  // var booksContainer = $('#books');
-  // books_data.forEach(function(book) {
-  //     var buttonHtml = book.認證狀態 === '可認證' ?
-  //         `<a href="${book.閱讀起步走URL}" target="_blank" class="btn btn-outline-primary mt-auto">🟩可認證</a>` :
-  //         '';
-  //     var buttonHyread = `<a href="${book.Hyread連結}" target="_blank" class="btn btn-outline-ebook-primary mt-1">🟦電子書</a>`
-
-  //     var bookHtml = `
-  //         <div class="col-6 col-md-6 col-lg-4 col-xl-2 mb-4">
-  //             <div class="card h-100 d-flex flex-column">
-  //                 <img src="${book.書本封面}" class="card-img-top" alt="${book.書名}">
-  //                 <div class="card-body d-flex flex-column">
-  //                     <h5 class="card-title mb-3">${book.書名}</h5>
-  //                     ${buttonHtml}
-  //                     ${buttonHyread}
-  //                 </div>
-  //             </div>
-  //         </div>
-  //     `;
-  //     booksContainer.append(bookHtml);
-  // });
-
   var allData = []; // 用於儲存從伺服器獲取的完整資料
 
   // 函式：根據選擇的學校更新班級選單
@@ -42,7 +20,7 @@ $(document).ready(function () {
       sortedClasses.push("Others"); // 將 "Others" 添加到最後
     }
     $("#class").empty(); // 清空班級選單
-    $("#class").append(new Option("選擇班級", "")); // 添加預設選項
+    $("#class").append(new Option("All", "")); // 添加預設選項
     sortedClasses.forEach(function (cls) {
       $("#class").append(new Option(cls, cls));
     });
@@ -112,13 +90,13 @@ $(document).ready(function () {
       var cardClass = $(this).data("class");
       var cardOpen = $(this).data("open");
 
-      if (
-        (school === "所有學校" || cardSchool === school) &&
-        (cls === "所有班級" ||
-          cardClass === cls ||
-          (cls === "Others" && cardClass === "")) &&
-        cardOpen === true
-      ) {
+      var isSchoolMatch = school === cardSchool || school === "All"; // 如果選擇了特定學校或所有學校
+      var isClassMatch =
+        cls === "All" ||
+        cardClass === cls ||
+        (cls === "Others" && cardClass === "");
+
+      if (isSchoolMatch && (isClassMatch || cls === "") && cardOpen === true) {
         // 僅當 cardOpen 為 true 時顯示
         $(this).parent().show(); // 顯示符合條件的卡片
       } else {
