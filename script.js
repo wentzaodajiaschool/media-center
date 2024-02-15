@@ -88,7 +88,7 @@ $(document).ready(function () {
       var albumHtml = `
 		<div class="col-6 col-md-6 col-lg-4 col-xl-3 mb-4">
 			<div class="card h-100 d-flex flex-column card-animate" data-school="${album.學校}" data-class="${album.班級}" data-open="${album.開放}">
-				<img src="${album.封面連結}" class="card-img-top" alt="${album.標題}">
+				<img src="${album.imgur連結}" class="card-img-top" alt="${album.標題}">
 				<div class="card-body d-flex flex-column">
 					<h5 class="card-title mb-3">${album.標題}</h5>
 					<!-- 如有其他按鈕或資訊，可在這裡添加 -->
