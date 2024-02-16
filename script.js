@@ -1,22 +1,28 @@
 $(document).ready(function () {
   var allData = []; // 用於儲存從伺服器獲取的完整資料
 
-  window.onscroll = function() {scrollFunction()};
+  window.onscroll = function () {
+    scrollFunction();
+  };
 
   function scrollFunction() {
     var scrollTopBtn = document.getElementById("scrollTopBtn");
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    if (
+      document.body.scrollTop > 20 ||
+      document.documentElement.scrollTop > 20
+    ) {
       scrollTopBtn.style.display = "block";
     } else {
       scrollTopBtn.style.display = "none";
     }
   }
-  
-  document.getElementById("scrollTopBtn").addEventListener("click", function() {
-    document.body.scrollTop = 0; // 對於 Safari
-    document.documentElement.scrollTop = 0; // 對於 Chrome, Firefox, IE 和 Opera
-  });
-  
+
+  document
+    .getElementById("scrollTopBtn")
+    .addEventListener("click", function () {
+      document.body.scrollTop = 0; // 對於 Safari
+      document.documentElement.scrollTop = 0; // 對於 Chrome, Firefox, IE 和 Opera
+    });
 
   // 函式：根據選擇的學校更新班級選單
   function updateClassesDropdown(selectedSchool) {
@@ -114,7 +120,7 @@ $(document).ready(function () {
         playLink.startsWith("https://drive.google.com/drive/folders")
       ) {
         // 如果鏈接符合條件，新標籤頁中打開
-        window.open(playLink, "_blank");
+        window.open(playLink + "&openExternalBrowser=1", "_blank");
       }
     });
 
@@ -158,6 +164,11 @@ $(document).ready(function () {
     filterAlbumsBySelection(selectedSchool, selectedClass);
   });
 
+  // 首字大寫
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+
   // 函式：從指定 URL 獲取資料並填充下拉選單
   function fetchAndFillDropdowns() {
     $.ajax({
@@ -166,19 +177,33 @@ $(document).ready(function () {
       success: function (data) {
         console.log("資料請求成功", data);
         allData = data; // 儲存完整資料
-        var schools = new Set();
-        data.forEach(function (item) {
-          schools.add(item["學校"]);
-        });
-        schools.forEach(function (school) {
-          $("#school").append(new Option(school, school));
-        });
-        var firstSchool = Array.from(schools)[0];
-        updateClassesDropdown(firstSchool);
-        $("#school").val(firstSchool);
 
+        // 檢查 URL 中的 school 參數
+        var urlParams = new URLSearchParams(window.location.search);
+        var schoolParam = capitalizeFirstLetter(urlParams.get("school"));
+
+        if (schoolParam) {
+          // 存在 school 參數時，直接設定下拉選單並禁用
+          $("#school")
+            .empty()
+            .append(new Option(schoolParam, schoolParam))
+            .prop("disabled", true);
+            updateClassesDropdown(schoolParam);
+            $("#school").val(schoolParam);
+        } else {
+          var schools = new Set();
+          data.forEach(function (item) {
+            schools.add(item["學校"]);
+          });
+          schools.forEach(function (school) {
+            $("#school").append(new Option(school, school));
+          });
+          var firstSchool = Array.from(schools)[0];
+          updateClassesDropdown(firstSchool);
+          $("#school").val(firstSchool);
+        }
         // 在這裡調用生成相簿卡片的函式
-        generateAlbumCards(allData); // 假設相簿資料也在 allData 中
+        generateAlbumCards(allData.filter(item => item["學校"] === $("#school").val())); // 假設相簿資料也在 allData 中
       },
       error: function () {
         console.error("資料請求失敗");
