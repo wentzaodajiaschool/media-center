@@ -1,6 +1,23 @@
 $(document).ready(function () {
   var allData = []; // 用於儲存從伺服器獲取的完整資料
 
+  window.onscroll = function() {scrollFunction()};
+
+  function scrollFunction() {
+    var scrollTopBtn = document.getElementById("scrollTopBtn");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      scrollTopBtn.style.display = "block";
+    } else {
+      scrollTopBtn.style.display = "none";
+    }
+  }
+  
+  document.getElementById("scrollTopBtn").addEventListener("click", function() {
+    document.body.scrollTop = 0; // 對於 Safari
+    document.documentElement.scrollTop = 0; // 對於 Chrome, Firefox, IE 和 Opera
+  });
+  
+
   // 函式：根據選擇的學校更新班級選單
   function updateClassesDropdown(selectedSchool) {
     var classes = new Set(); // 使用 Set 來確保不重複

@@ -193,14 +193,41 @@ body {
 
 /* 定位關閉按鈕到右上角 */
 .modal-body .btn-close {
-  position: absolute;
-  right: 1rem; /* 右邊距 */
-  top: 1rem; /* 上邊距 */
-  z-index: 1050; /* 確保按鈕在 iframe 之上 */
+    position: absolute;
+    right: 1rem; /* 右邊距 */
+    top: 1rem; /* 上邊距 */
+    z-index: 1050; /* 確保按鈕在 iframe 之上 */
 }
 
 /* 為 modal-body 添加內邊距，避免內容與關閉按鈕重疊 */
 .modal-body {
-  position: relative; /* 使絕對定位的按鈕相對於 modal-body 定位 */
-  padding-top: 3rem; /* 上方留出空間給關閉按鈕 */
+    position: relative; /* 使絕對定位的按鈕相對於 modal-body 定位 */
+    padding-top: 3rem; /* 上方留出空間給關閉按鈕 */
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+#scrollTopBtn {
+  animation: fadeIn 0.5s;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+  z-index: 99;
+  border: 1px solid #fff; /* 添加白色外框 */
+  outline: none;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 10px;
+  transition: transform 0.3s ease; /* 添加轉換效果使按鈕平滑上浮 */
+}
+
+#scrollTopBtn:hover {
+  transform: translateY(-5px); /* 滑鼠懸停時上浮 */
+}
+
