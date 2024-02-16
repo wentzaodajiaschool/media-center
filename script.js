@@ -61,32 +61,6 @@ $(document).ready(function () {
 
     albumData.forEach(function (album) {
       var albumHtml = `
-		<div class="col-6 col-md-6 col-lg-4 col-xl-2 mb-4">
-			<div class="card h-100 d-flex flex-column" data-school="${album.學校}" data-class="${album.班級}">
-				<img src="${album.封面連結}" class="card-img-top" alt="${album.標題}">
-				<div class="card-body d-flex flex-column">
-					<h5 class="card-title mb-3">${album.標題}</h5>
-					<!-- 如有其他按鈕或資訊，可在這裡添加 -->
-				</div>
-			</div>
-		</div>
-	  `;
-      albumsContainer.append(albumHtml);
-    });
-  }
-
-  // 函式：生成相簿卡片
-  function generateAlbumCards(albumData) {
-    var albumsContainer = $("#albums");
-    albumsContainer.empty(); // 清空先前的內容
-
-    // 按專輯名稱排序
-    albumData.sort(function (a, b) {
-      return a.標題.localeCompare(b.標題);
-    });
-
-    albumData.forEach(function (album) {
-      var albumHtml = `
 		<div class="col-6 col-md-6 col-lg-4 col-xl-3 mb-4">
 			<div class="card h-100 d-flex flex-column card-animate" data-school="${album.學校}" data-class="${album.班級}" data-open="${album.開放}" data-playlink="${album.播放連結}">
 				<img src="${album.封面連結}" class="card-img-top" alt="${album.標題}">
@@ -180,16 +154,22 @@ $(document).ready(function () {
 
         // 檢查 URL 中的 school 參數
         var urlParams = new URLSearchParams(window.location.search);
-        var schoolParam = capitalizeFirstLetter(urlParams.get("school"));
+        var schoolParam = urlParams.get("school");
 
         if (schoolParam) {
           // 存在 school 參數時，直接設定下拉選單並禁用
+          schoolParam = capitalizeFirstLetter(schoolParam);
           $("#school")
             .empty()
             .append(new Option(schoolParam, schoolParam))
             .prop("disabled", true);
-            updateClassesDropdown(schoolParam);
-            $("#school").val(schoolParam);
+          updateClassesDropdown(schoolParam);
+          $("#school").val(schoolParam);
+
+          // 在設定完學校下拉菜單後，根據當前選擇的學校生成相應的相簿卡片
+          generateAlbumCards(
+            allData.filter((item) => item["學校"] === $("#school").val())
+          );
         } else {
           var schools = new Set();
           data.forEach(function (item) {
@@ -201,9 +181,14 @@ $(document).ready(function () {
           var firstSchool = Array.from(schools)[0];
           updateClassesDropdown(firstSchool);
           $("#school").val(firstSchool);
+
+          // 在這裡調用生成相簿卡片的函式
+          generateAlbumCards(allData);
+          // 更新卡片資料
+          var selectedSchool = $("#school").val();
+          var selectedClass = $("#class").val();
+          filterAlbumsBySelection(selectedSchool, selectedClass);
         }
-        // 在這裡調用生成相簿卡片的函式
-        generateAlbumCards(allData.filter(item => item["學校"] === $("#school").val())); // 假設相簿資料也在 allData 中
       },
       error: function () {
         console.error("資料請求失敗");
