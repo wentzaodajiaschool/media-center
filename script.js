@@ -78,14 +78,32 @@ $(document).ready(function () {
     });
 
     // 為卡片添加點擊事件
-    $(".card").click(function () {
-      var playLink = $(this).data("playlink"); // 獲取 data-playlink 屬性的值
-      if (playLink.startsWith("https://drive.google.com/drive/folders")) {
-        window.open(playLink, "_blank"); // 在新分頁中打開連結
+    $("#albums").on("click", ".card", function () {
+      var playLink = $(this).data("playlink"); // 獲取卡片的播放鏈接
+
+      // 檢查鏈接是否以特定YouTube鏈接開頭
+      if (playLink.startsWith("https://www.youtube.com/embed/videoseries?")) {
+        // 更新iframe的src為播放鏈接
+        $("#youtubeEmbed").attr("src", playLink + "?autoplay=1"); // 添加自動播放參數
+        // 顯示Bootstrap模態框
+        var videoModal = new bootstrap.Modal(
+          document.getElementById("videoModal"),
+          {
+            keyboard: true,
+          }
+        );
+        videoModal.show();
+      } else if (
+        playLink.startsWith("https://drive.google.com/drive/folders")
+      ) {
+        // 如果鏈接符合條件，新標籤頁中打開
+        window.open(playLink, "_blank");
       }
-      else{
-        alert('test')
-      }
+    });
+
+    // 監聽模態框關閉事件，清除iframe的src
+    $("#videoModal").on("hidden.bs.modal", function (e) {
+      $("#youtubeEmbed").attr("src", "");
     });
 
     // 添加動畫

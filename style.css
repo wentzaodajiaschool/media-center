@@ -161,3 +161,46 @@ body {
   opacity: 1 !important;
   transform: translateY(0);
 }
+
+/* 模態框深色背景 */
+.modal-content {
+  background-color: #343a40; /* Bootstrap 深灰色 */
+  color: white; /* 文字顏色設為白色 */
+}
+
+/* 模態框頭部和腳部深色背景（如果需要） */
+.modal-header, .modal-footer {
+  border-color: #454d55; /* 設置邊框顏色為更深的灰色 */
+}
+
+/* 關閉按鈕（X）顏色 */
+.modal-close {
+  color: white; /* 設置關閉按鈕顏色為白色 */
+  filter: drop-shadow(0 0 2px black); /* 選擇性：為 X 添加陰影以增加對比 */
+}
+
+/* 當關閉按鈕為 btn-close 類時，針對 Bootstrap 5 的樣式 */
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* */
+@media (max-width: 576px) {
+  #youtubeEmbed {
+    height: 85vh; /* */
+  }
+}
+
+/* 定位關閉按鈕到右上角 */
+.modal-body .btn-close {
+  position: absolute;
+  right: 1rem; /* 右邊距 */
+  top: 1rem; /* 上邊距 */
+  z-index: 1050; /* 確保按鈕在 iframe 之上 */
+}
+
+/* 為 modal-body 添加內邊距，避免內容與關閉按鈕重疊 */
+.modal-body {
+  position: relative; /* 使絕對定位的按鈕相對於 modal-body 定位 */
+  padding-top: 3rem; /* 上方留出空間給關閉按鈕 */
+}
