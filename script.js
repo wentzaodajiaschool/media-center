@@ -90,7 +90,18 @@ $(document).ready(function () {
         //   }
         // );
         // videoModal.show();
-      window.open(playLink + "&openExternalBrowser=1", "_blank");
+	              // 從原始連結中提取list參數
+        const listMatch = playLink.match(/list=([^&]+)/);
+        if (listMatch && listMatch[1]) {
+          const listId = listMatch[1];
+          // 構建新的YouTube播放列表連結
+          const newPlayLink = `https://youtube.com/playlist?list=${listId}&openExternalBrowser=1&autoplay=1`;
+          window.open(newPlayLink, "_blank");
+        } else {
+          // 如果無法提取list參數，則使用原始連結
+          window.open(playLink + "&openExternalBrowser=1", "_blank");
+        }
+      // window.open(playLink + "&openExternalBrowser=1", "_blank");
       } else if (
         playLink.startsWith("https://drive.google.com/drive/folders")
       ) {
