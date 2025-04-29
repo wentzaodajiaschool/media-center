@@ -80,16 +80,17 @@ $(document).ready(function () {
 
       // 檢查鏈接是否以特定YouTube鏈接開頭
       if (playLink.startsWith("https://www.youtube.com/embed/videoseries?")) {
-        // 更新iframe的src為播放鏈接
-        $("#youtubeEmbed").attr("src", playLink + "?autoplay=1"); // 添加自動播放參數
-        // 顯示Bootstrap模態框
-        var videoModal = new bootstrap.Modal(
-          document.getElementById("videoModal"),
-          {
-            keyboard: true,
-          }
-        );
-        videoModal.show();
+        // // 更新iframe的src為播放鏈接
+        // $("#youtubeEmbed").attr("src", playLink + "?autoplay=1"); // 添加自動播放參數
+        // // 顯示Bootstrap模態框
+        // var videoModal = new bootstrap.Modal(
+        //   document.getElementById("videoModal"),
+        //   {
+        //     keyboard: true,
+        //   }
+        // );
+        // videoModal.show();
+      window.open(playLink + "&openExternalBrowser=1", "_blank");
       } else if (
         playLink.startsWith("https://drive.google.com/drive/folders")
       ) {
