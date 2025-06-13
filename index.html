@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#3f4652">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Media Center">
+    <link rel="apple-touch-icon" href="assets/img/library.ico">
+    <link rel="manifest" href="manifest.json">
     <title>多媒體中心-Media Center</title>
     <link rel="icon" href="assets/img/library.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -86,12 +91,29 @@
     <!-- 模態框 -->
     <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <!-- YouTube iframe -->
-                    <iframe id="youtubeEmbed" width="100%" height="90%" src="" frameborder="0"
-                        allowfullscreen></iframe>
+            <div class="modal-content bg-black">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex justify-content-center align-items-center">
+                    <!-- Player Container -->
+                    <div id="player-container">
+                        <!-- YouTube Player -->
+                        <div id="player"></div>
+
+                        <!-- Custom Controls -->
+                        <div id="custom-controls" class="glass-toolbar">
+                            <button id="prev-btn" class="btn btn-control"><i class="fas fa-step-backward"></i></button>
+                            <button id="play-pause-btn" class="btn btn-control"><i class="fas fa-play"></i></button>
+                            <button id="next-btn" class="btn btn-control"><i class="fas fa-step-forward"></i></button>
+                        </div>
+
+                        <!-- Custom Playlist -->
+                        <div id="custom-playlist">
+                            <!-- Playlist items will be dynamically injected here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,8 +121,7 @@
 
     <button id="scrollTopBtn">回頂端</button>
 
-    <script>
-    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script type="text/javascript" src="script.js"></script>
 </body>
 
