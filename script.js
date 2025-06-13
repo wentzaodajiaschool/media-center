@@ -1,5 +1,100 @@
+var player;
+var videoModal;
+var YOUTUBE_API_KEY = "AIzaSyDHjDjcHs4Hc9zRO09l1S63OzC5QLC5DXM"; // WARNING: Insecure for production
+
+// This function creates an <iframe> (and YouTube player)
+// after the API code downloads.
+function onYouTubeIframeAPIReady() {
+  console.log("YouTube API Ready");
+}
+
+function onPlayerReady(event) {
+  event.target.playVideo();
+  updatePlayPauseIcon(true);
+}
+
+function onPlayerStateChange(event) {
+    let isPlaying = event.data == YT.PlayerState.PLAYING;
+    updatePlayPauseIcon(isPlaying);
+
+    // Highlight the currently playing video in the custom playlist
+    if (event.data === YT.PlayerState.PLAYING) {
+        const videoUrl = event.target.getVideoUrl();
+        const videoIdMatch = videoUrl.match(/v=([^&]+)/);
+        if (videoIdMatch && videoIdMatch[1]) {
+            const currentVideoId = videoIdMatch[1];
+            $('.playlist-item').removeClass('active');
+            $(`.playlist-item[data-video-id="${currentVideoId}"]`).addClass('active');
+        }
+    }
+}
+
+function updatePlayPauseIcon(isPlaying) {
+    const icon = isPlaying ? 'fa-pause' : 'fa-play';
+    $('#play-pause-btn').find('i').removeClass('fa-play fa-pause').addClass(icon);
+}
+
+function stopVideo() {
+    if (player && typeof player.stopVideo === 'function') {
+        player.stopVideo();
+    }
+}
+
+function destroyPlayer() {
+    if (player && typeof player.destroy === 'function') {
+        player.destroy();
+    }
+    player = null;
+}
+
+// Fetches playlist items from YouTube Data API and displays them
+function fetchAndDisplayPlaylist(listId) {
+    const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${listId}&key=${YOUTUBE_API_KEY}`;
+    const playlistContainer = $('#custom-playlist');
+    playlistContainer.empty();
+
+    $.ajax({
+        url: apiUrl,
+        type: "GET",
+        success: function(response) {
+            response.items.forEach(function(item) {
+                const snippet = item.snippet;
+                const title = snippet.title;
+                const thumbnail = snippet.thumbnails.default.url;
+                const videoId = snippet.resourceId.videoId;
+
+                if (title !== "Private video" && title !== "Deleted video") {
+                    const playlistItemHtml = `
+                        <div class="playlist-item" data-video-id="${videoId}">
+                            <img src="${thumbnail}" alt="${title}">
+                            <div class="title">${title}</div>
+                        </div>
+                    `;
+                    playlistContainer.append(playlistItemHtml);
+                }
+            });
+        },
+        error: function() {
+            console.error("Failed to fetch playlist data from YouTube API.");
+            playlistContainer.html('<p class="text-white">無法載入播放清單。</p>');
+        }
+    });
+}
+
 $(document).ready(function () {
   var allData = []; // 用於儲存從伺服器獲取的完整資料
+  videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
+
+  // Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
 
   window.onscroll = function () {
     scrollFunction();
@@ -75,33 +170,37 @@ $(document).ready(function () {
     });
 
     // 為卡片添加點擊事件
-    $("#albums").on("click", ".card", function () {
+    $("#albums").off("click", ".card").on("click", ".card", function () {
       var playLink = $(this).data("playlink"); // 獲取卡片的播放鏈接
 
-      // 檢查鏈接是否以特定YouTube鏈接開頭
       if (playLink.startsWith("https://www.youtube.com/embed/videoseries?")) {
-        // // 更新iframe的src為播放鏈接
-        // $("#youtubeEmbed").attr("src", playLink + "?autoplay=1"); // 添加自動播放參數
-        // // 顯示Bootstrap模態框
-        // var videoModal = new bootstrap.Modal(
-        //   document.getElementById("videoModal"),
-        //   {
-        //     keyboard: true,
-        //   }
-        // );
-        // videoModal.show();
-	              // 從原始連結中提取list參數
         const listMatch = playLink.match(/list=([^&]+)/);
         if (listMatch && listMatch[1]) {
           const listId = listMatch[1];
-          // 構建新的YouTube播放列表連結
-          const newPlayLink = `https://youtube.com/playlist?list=${listId}&openExternalBrowser=1&autoplay=1`;
-          window.open(newPlayLink, "_blank");
-        } else {
-          // 如果無法提取list參數，則使用原始連結
-          window.open(playLink + "&openExternalBrowser=1", "_blank");
+          
+          fetchAndDisplayPlaylist(listId); // Fetch and build our custom playlist UI
+
+          destroyPlayer(); // Destroy previous player instance if it exists
+
+          player = new YT.Player('player', {
+            height: '100%',
+            width: '100%',
+            playerVars: {
+              'playsinline': 1,
+              'autoplay': 1,
+              'listType': 'playlist',
+              'list': listId,
+              'controls': 1, // Show YouTube default controls
+              'showinfo': 0,
+              'rel': 0
+            },
+            events: {
+              'onReady': onPlayerReady,
+              'onStateChange': onPlayerStateChange
+            }
+          });
+          videoModal.show();
         }
-      // window.open(playLink + "&openExternalBrowser=1", "_blank");
       } else if (
         playLink.startsWith("https://drive.google.com/drive/folders")
       ) {
@@ -112,7 +211,41 @@ $(document).ready(function () {
 
     // 監聽模態框關閉事件，清除iframe的src
     $("#videoModal").on("hidden.bs.modal", function (e) {
-      $("#youtubeEmbed").attr("src", "");
+        destroyPlayer();
+        updatePlayPauseIcon(false);
+        $('#custom-playlist').empty(); // Clear the custom playlist
+    });
+
+    // Custom controls
+    $('#play-pause-btn').on('click', function () {
+        if (player && typeof player.getPlayerState === 'function') {
+            const state = player.getPlayerState();
+            if (state === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        }
+    });
+
+    $('#next-btn').on('click', function () {
+        if (player && typeof player.nextVideo === 'function') {
+            player.nextVideo();
+        }
+    });
+
+    $('#prev-btn').on('click', function () {
+        if (player && typeof player.previousVideo === 'function') {
+            player.previousVideo();
+        }
+    });
+
+    // Click handler for custom playlist items
+    $('#custom-playlist').on('click', '.playlist-item', function() {
+        if (player && typeof player.loadVideoById === 'function') {
+            const videoId = $(this).data('video-id');
+            player.loadVideoById(videoId);
+        }
     });
 
     // 添加動畫
@@ -122,19 +255,22 @@ $(document).ready(function () {
   }
 
   // 函式：根據下拉選單選擇過濾專輯卡片
-  function filterAlbumsBySelection(school, cls) {
+  function filterAlbumsBySelection() {
+    var selectedSchool = $("#school").val();
+    var selectedClass = $("#class").val();
+
     $("#albums .card").each(function () {
       var cardSchool = $(this).data("school");
       var cardClass = $(this).data("class");
       var cardOpen = $(this).data("open");
 
-      var isSchoolMatch = school === cardSchool || school === "All"; // 如果選擇了特定學校或所有學校
+      var isSchoolMatch = selectedSchool === cardSchool || selectedSchool === "All"; // 如果選擇了特定學校或所有學校
       var isClassMatch =
-        cls === "All" ||
-        cardClass === cls ||
-        (cls === "Others" && cardClass === "");
+        selectedClass === "All" ||
+        cardClass === selectedClass ||
+        (selectedClass === "Others" && cardClass === "");
 
-      if (isSchoolMatch && (isClassMatch || cls === "") && cardOpen === true) {
+      if (isSchoolMatch && (isClassMatch || selectedClass === "") && cardOpen === true) {
         // 僅當 cardOpen 為 true 時顯示
         $(this).parent().show(); // 顯示符合條件的卡片
       } else {
@@ -143,77 +279,122 @@ $(document).ready(function () {
     });
   }
 
-  // 更新下拉選單的事件處理函式
-  $("#school, #class").change(function () {
-    var selectedSchool = $("#school").val();
-    var selectedClass = $("#class").val();
-    filterAlbumsBySelection(selectedSchool, selectedClass);
-  });
-
   // 首字大寫
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   }
 
-  // 函式：從指定 URL 獲取資料並填充下拉選單
-  function fetchAndFillDropdowns() {
+  // 函式：從本地 data.json 獲取資料並填充下拉選單
+  function fetchAndFillDropdownsFromLocal() {
     $.ajax({
-      url: "https://script.google.com/macros/s/AKfycbyKDtd2gD3GPRggKCaZ67uL3vHYPFfyS5zjZtuS83Li0Fes0cZv29dlF-bkTxFCs3DSpA/exec",
+      url: "data.json", // 從本地 JSON 檔案變更
       type: "GET",
+      dataType: "json", // 需要 JSON 回應
       success: function (data) {
-        console.log("資料請求成功", data);
+        console.log("本地資料請求成功", data);
         allData = data; // 儲存完整資料
 
-        // 檢查 URL 中的 school 參數
+        // 僅排序一次資料
+        allData.sort(function (a, b) {
+            return a.標題.localeCompare(b.標題);
+        });
+
+        // 一次性生成所有卡片
+        generateAlbumCards(allData);
+
+        // 填充學校下拉選單
+        var schools = new Set();
+        allData.forEach(function (item) {
+            schools.add(item["學校"]);
+        });
+        
+        var schoolSelect = $("#school");
+        schoolSelect.empty();
+        schools.forEach(function (school) {
+            schoolSelect.append(new Option(school, school));
+        });
+
+        // 處理 URL 參數或設定預設值
         var urlParams = new URLSearchParams(window.location.search);
         var schoolParam = urlParams.get("school");
 
         if (schoolParam) {
-          // 存在 school 參數時，直接設定下拉選單並禁用
-          schoolParam = capitalizeFirstLetter(schoolParam);
-          $("#school")
-            .empty()
-            .append(new Option(schoolParam, schoolParam))
-            .prop("disabled", true);
-          updateClassesDropdown(schoolParam);
-          $("#school").val(schoolParam);
-
-          // 在設定完學校下拉菜單後，根據當前選擇的學校生成相應的相簿卡片
-          generateAlbumCards(
-            allData.filter((item) => item["學校"] === $("#school").val())
-          );
-        } else {
-          var schools = new Set();
-          data.forEach(function (item) {
-            schools.add(item["學校"]);
-          });
-          schools.forEach(function (school) {
-            $("#school").append(new Option(school, school));
-          });
-          var firstSchool = Array.from(schools)[0];
-          updateClassesDropdown(firstSchool);
-          $("#school").val(firstSchool);
-
-          // 在這裡調用生成相簿卡片的函式
-          generateAlbumCards(allData);
-          // 更新卡片資料
-          var selectedSchool = $("#school").val();
-          var selectedClass = $("#class").val();
-          filterAlbumsBySelection(selectedSchool, selectedClass);
+            schoolParam = capitalizeFirstLetter(schoolParam);
+            if (Array.from(schools).includes(schoolParam)) {
+                schoolSelect.val(schoolParam).prop("disabled", true);
+            }
         }
+        
+        // 以程式化方式觸發 change 事件以設定初始狀態
+        schoolSelect.trigger("change");
       },
       error: function () {
-        console.error("資料請求失敗");
+        console.error("本地資料請求失敗");
       },
     });
   }
 
-  // 學校選單的事件處理函式
+  // 函式：從遠端 URL 獲取資料並填充下拉選單
+  function fetchAndFillDropdownsFromRemote() {
+    $.ajax({
+      url: "https://script.google.com/macros/s/AKfycbyKDtd2gD3GPRggKCaZ67uL3vHYPFfyS5zjZtuS83Li0Fes0cZv29dlF-bkTxFCs3DSpA/exec",
+      type: "GET",
+      success: function (data) {
+        console.log("遠端資料請求成功", data);
+        allData = data; // 儲存完整資料
+
+        // 後續邏輯與本地版本相同，可以考慮合併
+        // 僅排序一次資料
+        allData.sort(function (a, b) {
+            return a.標題.localeCompare(b.標題);
+        });
+
+        // 一次性生成所有卡片
+        generateAlbumCards(allData);
+
+        // 填充學校下拉選單
+        var schools = new Set();
+        allData.forEach(function (item) {
+            schools.add(item["學校"]);
+        });
+
+        var schoolSelect = $("#school");
+        schoolSelect.empty();
+        schools.forEach(function (school) {
+            schoolSelect.append(new Option(school, school));
+        });
+
+        // 處理 URL 參數或設定預設值
+        var urlParams = new URLSearchParams(window.location.search);
+        var schoolParam = urlParams.get("school");
+
+        if (schoolParam) {
+            schoolParam = capitalizeFirstLetter(schoolParam);
+            if (Array.from(schools).includes(schoolParam)) {
+                schoolSelect.val(schoolParam).prop("disabled", true);
+            }
+        }
+
+        // 以程式化方式觸發 change 事件以設定初始狀態
+        schoolSelect.trigger("change");
+      },
+      error: function () {
+        console.error("遠端資料請求失敗");
+      },
+    });
+  }
+
+  // 分離的事件處理程序
   $("#school").change(function () {
     var selectedSchool = $(this).val();
     updateClassesDropdown(selectedSchool);
+    filterAlbumsBySelection();
+  });
+
+  $("#class").change(function () {
+    filterAlbumsBySelection();
   });
 
   // 呼叫函式以填充下拉選單和生成相簿卡片
-  fetchAndFillDropdowns();
+  fetchAndFillDropdownsFromLocal();
 });
