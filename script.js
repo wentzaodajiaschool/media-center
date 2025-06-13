@@ -82,36 +82,49 @@ function updateProgressBar() {
 
 // Fetches playlist items from YouTube Data API and displays them
 function fetchAndDisplayPlaylist(listId) {
-    const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${listId}&key=${YOUTUBE_API_KEY}`;
     const playlistContainer = $('#custom-playlist');
     playlistContainer.empty();
 
-    $.ajax({
-        url: apiUrl,
-        type: "GET",
-        success: function(response) {
-            response.items.forEach(function(item) {
-                const snippet = item.snippet;
-                const title = snippet.title;
-                const thumbnail = snippet.thumbnails.default.url;
-                const videoId = snippet.resourceId.videoId;
-
-                if (title !== "Private video" && title !== "Deleted video") {
-                    const playlistItemHtml = `
-                        <div class="playlist-item" data-video-id="${videoId}">
-                            <img src="${thumbnail}" alt="${title}">
-                            <div class="title">${title}</div>
-                        </div>
-                    `;
-                    playlistContainer.append(playlistItemHtml);
-                }
-            });
-        },
-        error: function() {
-            console.error("Failed to fetch playlist data from YouTube API.");
-            playlistContainer.html('<p class="text-white">無法載入播放清單。</p>');
+    function fetchPage(pageToken) {
+        let apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${listId}&key=${YOUTUBE_API_KEY}`;
+        if (pageToken) {
+            apiUrl += `&pageToken=${pageToken}`;
         }
-    });
+
+        $.ajax({
+            url: apiUrl,
+            type: "GET",
+            success: function(response) {
+                response.items.forEach(function(item) {
+                    const snippet = item.snippet;
+                    const title = snippet.title;
+                    const thumbnail = snippet.thumbnails.default.url;
+                    const videoId = snippet.resourceId.videoId;
+
+                    if (title !== "Private video" && title !== "Deleted video") {
+                        const playlistItemHtml = `
+                            <div class="playlist-item" data-video-id="${videoId}">
+                                <img src="${thumbnail}" alt="${title}">
+                                <div class="title">${title}</div>
+                            </div>
+                        `;
+                        playlistContainer.append(playlistItemHtml);
+                    }
+                });
+
+                // If there is a next page, recursively fetch it
+                if (response.nextPageToken) {
+                    fetchPage(response.nextPageToken);
+                }
+            },
+            error: function() {
+                console.error("Failed to fetch playlist data from YouTube API.");
+                playlistContainer.html('<p class="text-white">無法載入播放清單。</p>');
+            }
+        });
+    }
+
+    fetchPage(null); // Start fetching the first page
 }
 
 $(document).ready(function () {
