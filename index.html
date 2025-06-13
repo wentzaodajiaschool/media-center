@@ -102,11 +102,24 @@
                         <!-- YouTube Player -->
                         <div id="player"></div>
 
+                        <!-- Custom Progress Bar (Mobile Only) -->
+                        <div id="custom-progress-bar-container">
+                            <div id="progress-tooltip">0:00</div>
+                            <div id="custom-progress-bar"></div>
+                            <div id="progress-bar-thumb"></div>
+                        </div>
+
                         <!-- Custom Controls -->
                         <div id="custom-controls" class="glass-toolbar">
-                            <button id="prev-btn" class="btn btn-control"><i class="fas fa-step-backward"></i></button>
-                            <button id="play-pause-btn" class="btn btn-control"><i class="fas fa-play"></i></button>
-                            <button id="next-btn" class="btn btn-control"><i class="fas fa-step-forward"></i></button>
+                            <div class="playback-controls">
+                                <button id="prev-btn" class="btn btn-control"><i class="fas fa-step-backward"></i></button>
+                                <button id="play-pause-btn" class="btn btn-control"><i class="fas fa-play"></i></button>
+                                <button id="next-btn" class="btn btn-control"><i class="fas fa-step-forward"></i></button>
+                            </div>
+                            <div id="duration-display">
+                                <div id="current-time">0:00</div>
+                                <div id="total-duration">0:00</div>
+                            </div>
                         </div>
 
                         <!-- Custom Playlist -->
