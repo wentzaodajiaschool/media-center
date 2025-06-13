@@ -1,0 +1,15 @@
+{
+  "short_name": "Media Center",
+  "name": "多媒體中心-Media Center",
+  "icons": [
+    {
+      "src": "assets/img/library.ico",
+      "type": "image/x-icon",
+      "sizes": "64x64 32x32 24x24 16x16"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#3f4652",
+  "background_color": "#ffffff"
+} 
