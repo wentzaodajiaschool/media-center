@@ -241,7 +241,7 @@ body {
     flex-direction: column;
     background: #000;
     border-radius: 20px;
-    overflow: hidden;
+    position: relative;
 }
 
 #player {
@@ -249,6 +249,10 @@ body {
     height: auto;
     aspect-ratio: 16/9;
     flex-shrink: 0;
+    cursor: pointer;
+    overflow: hidden;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 #custom-playlist {
@@ -257,6 +261,8 @@ body {
     overflow-y: auto;
     background: #111;
     padding: 10px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .playlist-item {
@@ -308,8 +314,8 @@ body {
     padding: 10px 15px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-wrap: wrap; /* Allow controls to wrap on small screens */
+    justify-content: space-between;
+    flex-wrap: nowrap;
     gap: 15px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     z-index: 10;
@@ -328,7 +334,6 @@ body {
             "controls playlist";
         border-radius: 20px;
         background: rgba(0, 0, 0, 0.5);
-        overflow: hidden;
     }
 
     #player {
@@ -336,10 +341,12 @@ body {
         height: 100%;
         width: 100%;
         aspect-ratio: auto;
+        border-radius: 20px 0 0 0;
     }
 
     #custom-controls.glass-toolbar {
         grid-area: controls;
+        justify-content: center;
         border-radius: 0 0 0 20px;
         padding: 15px 25px;
         gap: 20px;
@@ -351,6 +358,15 @@ body {
         width: 100%;
         border-radius: 0 20px 20px 0;
         background: rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+    }
+
+    #custom-progress-bar-container {
+        display: none;
+    }
+
+    #duration-display {
+        display: none;
     }
 }
 
@@ -359,18 +375,14 @@ body {
     border: none !important;
     color: white !important;
     font-size: 1.8rem !important;
-    /* Increased size */
     width: 70px;
-    /* Fixed width */
     height: 70px;
-    /* Fixed height */
     border-radius: 50% !important;
-    /* Circular buttons */
     transition: all 0.2s ease-in-out;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-shrink: 0; /* Prevent buttons from shrinking */
+    flex-shrink: 0;
 }
 
 .btn-control:active {
@@ -417,4 +429,79 @@ body {
     background: white;
     cursor: pointer;
     border-radius: 50%;
+}
+
+#custom-progress-bar-container {
+    width: 90%;
+    margin: 15px auto;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+}
+
+#custom-progress-bar {
+    height: 100%;
+    width: 0;
+    background-color: #fff;
+    border-radius: 5px;
+    color: rgba(255, 255, 255, 0.7); /* Lighter color for total duration */
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+#progress-bar-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 20;
+    transition: transform 0.1s ease;
+}
+
+#progress-bar-thumb:active {
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+#progress-tooltip {
+    position: absolute;
+    bottom: 25px; /* Positioned securely above the progress bar */
+    left: 0; /* Position will be handled by JavaScript */
+    top: auto; /* Unset top positioning */
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 15px;
+    font-size: 3rem;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none; /* Ignore mouse events */
+    z-index: 100; /* Ensure it's on top of everything */
+}
+
+.playback-controls {
+    display: flex;
+    gap: 15px;
+}
+
+#duration-display {
+    color: white;
+    font-size: 0.9rem;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+#total-duration {
+    color: rgba(255, 255, 255, 0.7); /* Lighter color for total duration */
 }
