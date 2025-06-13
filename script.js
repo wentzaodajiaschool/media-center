@@ -1,6 +1,8 @@
 var player;
 var videoModal;
 var YOUTUBE_API_KEY = "AIzaSyDHjDjcHs4Hc9zRO09l1S63OzC5QLC5DXM"; // WARNING: Insecure for production
+var progressUpdateInterval;
+var isDraggingProgressBar = false;
 
 // This function creates an <iframe> (and YouTube player)
 // after the API code downloads.
@@ -11,11 +13,21 @@ function onYouTubeIframeAPIReady() {
 function onPlayerReady(event) {
   event.target.playVideo();
   updatePlayPauseIcon(true);
+
+  if (progressUpdateInterval) clearInterval(progressUpdateInterval);
+  progressUpdateInterval = setInterval(updateProgressBar, 250);
 }
 
 function onPlayerStateChange(event) {
     let isPlaying = event.data == YT.PlayerState.PLAYING;
     updatePlayPauseIcon(isPlaying);
+
+    if (event.data === YT.PlayerState.PLAYING) {
+        if (progressUpdateInterval) clearInterval(progressUpdateInterval);
+        progressUpdateInterval = setInterval(updateProgressBar, 250);
+    } else {
+        clearInterval(progressUpdateInterval);
+    }
 
     // Highlight the currently playing video in the custom playlist
     if (event.data === YT.PlayerState.PLAYING) {
@@ -45,6 +57,27 @@ function destroyPlayer() {
         player.destroy();
     }
     player = null;
+}
+
+function formatTime(seconds) {
+    seconds = Math.round(seconds);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+function updateProgressBar() {
+    if (player && player.getDuration && !isDraggingProgressBar) {
+        const currentTime = player.getCurrentTime();
+        const duration = player.getDuration();
+        if (duration > 0) {
+            const progressPercent = (currentTime / duration) * 100;
+            $('#custom-progress-bar').css('width', progressPercent + '%');
+            $('#progress-bar-thumb').css('left', progressPercent + '%');
+            $('#current-time').text(formatTime(currentTime));
+            $('#total-duration').text(formatTime(duration));
+        }
+    }
 }
 
 // Fetches playlist items from YouTube Data API and displays them
@@ -190,9 +223,11 @@ $(document).ready(function () {
               'autoplay': 1,
               'listType': 'playlist',
               'list': listId,
-              'controls': 1, // Show YouTube default controls
+              'controls': 0, // Show YouTube default controls
               'showinfo': 0,
-              'rel': 0
+              'rel': 0,
+              'iv_load_policy': 3, // Hide annotations
+              'modestbranding': 1  // Minimize YouTube logo
             },
             events: {
               'onReady': onPlayerReady,
@@ -214,6 +249,9 @@ $(document).ready(function () {
         destroyPlayer();
         updatePlayPauseIcon(false);
         $('#custom-playlist').empty(); // Clear the custom playlist
+        clearInterval(progressUpdateInterval);
+        $('#current-time').text('0:00');
+        $('#total-duration').text('0:00');
     });
 
     // Custom controls
@@ -397,4 +435,65 @@ $(document).ready(function () {
 
   // 呼叫函式以填充下拉選單和生成相簿卡片
   fetchAndFillDropdownsFromLocal();
+
+  function setupProgressBarHandlers() {
+    const progressBarContainer = $('#custom-progress-bar-container');
+    const thumb = $('#progress-bar-thumb');
+    const tooltip = $('#progress-tooltip');
+
+    const seekFromEvent = (e) => {
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (clientX === undefined) return;
+
+        const rect = progressBarContainer[0].getBoundingClientRect();
+        const offsetX = clientX - rect.left;
+        const width = progressBarContainer.width();
+        let progressPercent = (offsetX / width) * 100;
+
+        progressPercent = Math.max(0, Math.min(100, progressPercent));
+        
+        const duration = player.getDuration();
+        if (duration > 0) {
+            const seekTime = (duration * progressPercent) / 100;
+            
+            // Only seek if the user is not just hovering
+            if (isDraggingProgressBar) {
+                player.seekTo(seekTime, true);
+            }
+            
+            $('#custom-progress-bar').css('width', progressPercent + '%');
+            $('#progress-bar-thumb').css('left', progressPercent + '%');
+
+            // Update tooltip
+            tooltip.text(formatTime(seekTime));
+            tooltip.css('left', progressPercent + '%');
+        }
+    };
+
+    thumb.on('mousedown touchstart', function(e) {
+        e.preventDefault();
+        isDraggingProgressBar = true;
+        tooltip.css('opacity', '1');
+    });
+
+    $(window).on('mousemove touchmove', function(e) {
+        if (!isDraggingProgressBar) return;
+        e.preventDefault();
+        seekFromEvent(e);
+    }).on('mouseup touchend', function(e) {
+        if (isDraggingProgressBar) {
+            isDraggingProgressBar = false;
+            tooltip.css('opacity', '0');
+            // We need to call seek one last time on release
+            player.seekTo( (player.getDuration() * parseFloat(thumb.css('left')) / progressBarContainer.width()), true);
+        }
+    });
+
+    progressBarContainer.on('click', function(e) {
+        if (e.target.id === 'progress-bar-thumb') return;
+        seekFromEvent(e);
+    });
+  }
+
+  setupProgressBarHandlers();
 });
