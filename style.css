@@ -201,8 +201,10 @@ body {
 
 /* 為 modal-body 添加內邊距，避免內容與關閉按鈕重疊 */
 .modal-body {
-    position: relative; /* 使絕對定位的按鈕相對於 modal-body 定位 */
-    padding-top: 3rem; /* 上方留出空間給關閉按鈕 */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 @keyframes fadeIn {
@@ -229,4 +231,190 @@ body {
 
 #scrollTopBtn:hover {
   transform: translateY(-5px); /* 滑鼠懸停時上浮 */
+}
+
+/* Mobile-First Layout */
+#player-container {
+    width: 95vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#player {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    flex-shrink: 0;
+}
+
+#custom-playlist {
+    width: 100%;
+    flex-grow: 1;
+    overflow-y: auto;
+    background: #111;
+    padding: 10px;
+}
+
+.playlist-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.playlist-item:hover,
+.playlist-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.playlist-item img {
+    width: 80px;
+    height: 45px;
+    border-radius: 4px;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.playlist-item .title {
+    color: white;
+    font-size: 0.9rem;
+}
+
+.volume-control, #volume-slider {
+    display: none;
+}
+
+#custom-controls.glass-toolbar {
+    flex-shrink: 0;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: none;
+    border-bottom: none;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* Allow controls to wrap on small screens */
+    gap: 15px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+/* Desktop Layout */
+@media (min-width: 768px) {
+    #player-container {
+        width: 90vw;
+        height: 80vh;
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        grid-template-rows: 1fr auto;
+        grid-template-areas:
+            "player   playlist"
+            "controls playlist";
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+    }
+
+    #player {
+        grid-area: player;
+        height: 100%;
+        width: 100%;
+        aspect-ratio: auto;
+    }
+
+    #custom-controls.glass-toolbar {
+        grid-area: controls;
+        border-radius: 0 0 0 20px;
+        padding: 15px 25px;
+        gap: 20px;
+    }
+
+    #custom-playlist {
+        grid-area: playlist;
+        height: 100%;
+        width: 100%;
+        border-radius: 0 20px 20px 0;
+        background: rgba(0, 0, 0, 0.3);
+    }
+}
+
+.btn-control {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    color: white !important;
+    font-size: 1.8rem !important;
+    /* Increased size */
+    width: 70px;
+    /* Fixed width */
+    height: 70px;
+    /* Fixed height */
+    border-radius: 50% !important;
+    /* Circular buttons */
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+.btn-control:active {
+    background: rgba(255, 255, 255, 0.4) !important;
+    transform: scale(0.95);
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    color: white;
+    gap: 15px;
+}
+
+.volume-control i {
+    font-size: 1.5rem;
+}
+
+#volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 150px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    outline: none;
+    transition: opacity .2s;
+    cursor: pointer;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: white;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+#volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: white;
+    cursor: pointer;
+    border-radius: 50%;
 }
