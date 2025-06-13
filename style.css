@@ -313,12 +313,35 @@ body {
     border-bottom: none;
     padding: 10px 15px;
     display: flex;
+    flex-direction: column; /* Stack progress bar and controls vertically */
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    gap: 15px;
+    gap: 10px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     z-index: 10;
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.playback-controls {
+    display: flex;
+    gap: 15px;
+}
+
+#duration-display {
+    color: white;
+    font-size: 0.9rem;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+#total-duration {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* Desktop Layout */
@@ -346,10 +369,14 @@ body {
 
     #custom-controls.glass-toolbar {
         grid-area: controls;
-        justify-content: center;
         border-radius: 0 0 0 20px;
         padding: 15px 25px;
-        gap: 20px;
+        gap: 15px;
+    }
+
+    .control-row {
+        position: relative;
+        justify-content: center;
     }
 
     #custom-playlist {
@@ -358,15 +385,15 @@ body {
         width: 100%;
         border-radius: 0 20px 20px 0;
         background: rgba(0, 0, 0, 0.3);
-        overflow: hidden;
-    }
-
-    #custom-progress-bar-container {
-        display: none;
+        /* overflow: hidden; */
     }
 
     #duration-display {
-        display: none;
+        display: flex;
+        position: absolute;
+        right: 25px;
+        top: 50%;
+        transform: translateY(-50%);
     }
 }
 
@@ -447,9 +474,6 @@ body {
     background-color: #fff;
     border-radius: 5px;
     color: rgba(255, 255, 255, 0.7); /* Lighter color for total duration */
-    text-align: right;
-    display: flex;
-    flex-direction: column;
 }
 
 #progress-bar-thumb {
@@ -487,21 +511,4 @@ body {
     transition: opacity 0.2s;
     pointer-events: none; /* Ignore mouse events */
     z-index: 100; /* Ensure it's on top of everything */
-}
-
-.playback-controls {
-    display: flex;
-    gap: 15px;
-}
-
-#duration-display {
-    color: white;
-    font-size: 0.9rem;
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-}
-
-#total-duration {
-    color: rgba(255, 255, 255, 0.7); /* Lighter color for total duration */
 }
