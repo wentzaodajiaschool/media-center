@@ -1018,5 +1018,25 @@
     "開放": true,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTBoffLpZ_obJsNSL0Z_BVMc&playsinline=1",
     "封面連結": "https://i.imgur.com/j3Jj2mO.jpg.jpeg"
+  },
+  {
+    "編號": "103",
+    "標題": "A2 Flyers 4 Practice Tests",
+    "班級": "Cambridge",
+    "學校": "Rainbow",
+    "類別": "Cambridge",
+    "開放": true,
+    "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTAPCrMSXWBHR4N0V8HqRwhf&playsinline=1",
+    "封面連結": "https://i.imgur.com/PYwxWlK.jpg"
+  },
+  {
+    "編號": "104",
+    "標題": "A1 Movers 4 Practice Tests",
+    "班級": "Cambridge",
+    "學校": "Rainbow",
+    "類別": "Cambridge",
+    "開放": true,
+    "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTAqrDBdskfnDnd0y_mUCJ_T&playsinline=1",
+    "封面連結": "https://i.imgur.com/O3C9fDJ.jpg"
   }
 ]
