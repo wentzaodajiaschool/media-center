@@ -125,7 +125,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": "Go",
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTDoZGzIsFioJHurK0fvmlrP&playsinline=1",
     "封面連結": "https://i.imgur.com/WrWhkDQ.png"
   },
@@ -395,7 +395,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTDMmM0TwyuhIzo8xNu_BCA3&playsinline=1",
     "封面連結": "https://i.imgur.com/3q5fedd.png"
   },
@@ -475,7 +475,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTBaOQ0tJ7Y8ngUsqV8ad8Xq&playsinline=1",
     "封面連結": "https://i.imgur.com/ISz6EL7.png"
   },
@@ -505,7 +505,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://drive.google.com/drive/folders/1AruKG3CyBfeeAzIewh804XxdXvmh0ecr?usp=drive_link",
     "封面連結": "https://i.imgur.com/taKq0sf.png"
   },
@@ -525,7 +525,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTASIxMGtFhMmW-crsXgg8sa&playsinline=1",
     "封面連結": "https://i.imgur.com/IHFIOSe.png"
   },
@@ -655,7 +655,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTCLt_0v4rjE4CXiFdadVH5b&playsinline=1",
     "封面連結": "https://i.imgur.com/xzMYfPy.png"
   },
@@ -765,7 +765,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTB8Esgdhg0crTd89K_Zz3OB&playsinline=1",
     "封面連結": "https://i.imgur.com/SV9UdKZ.png"
   },
@@ -785,7 +785,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTCX2KNQ57Qj7EraOel8cUvt&playsinline=1",
     "封面連結": "https://i.imgur.com/Evj9zio.png"
   },
@@ -885,7 +885,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTArvda-d9g_hR_YMzsvD-Dd&playsinline=1",
     "封面連結": "https://i.imgur.com/kXyFT8P.png"
   },
@@ -925,7 +925,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTAD9DTvrS-C8WY1bL0gl8_I&playsinline=1",
     "封面連結": "https://i.imgur.com/Re3FnfY.png"
   },
@@ -945,7 +945,7 @@
     "班級": "Cambridge",
     "學校": "Rainbow",
     "類別": "Cambridge",
-    "開放": true,
+    "開放": false,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTA9OndmQlvKAgh1H7gn6qKs&playsinline=1",
     "封面連結": "https://i.imgur.com/Dsi85O0.png"
   },
@@ -1017,6 +1017,6 @@
     "類別": "Grammar Goals",
     "開放": true,
     "播放連結": "https://www.youtube.com/embed/videoseries?list=PL8cmjC9kOKTBoffLpZ_obJsNSL0Z_BVMc&playsinline=1",
-    "封面連結": "https://i.imgur.com/j3Jj2mO.jpg"
+    "封面連結": "https://i.imgur.com/j3Jj2mO.jpg.jpeg"
   }
 ]
