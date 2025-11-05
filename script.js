@@ -338,7 +338,7 @@ $(document).ready(function () {
   // 函式：從本地 data.json 獲取資料並填充下拉選單
   function fetchAndFillDropdownsFromLocal() {
     $.ajax({
-      url: "data.json", // 從本地 JSON 檔案變更
+      url: "https://rainbowstudent.wentzao.com/mediacenter/api/data", // 從本地 JSON 檔案變更
       type: "GET",
       dataType: "json", // 需要 JSON 回應
       success: function (data) {
