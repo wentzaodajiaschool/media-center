@@ -343,7 +343,7 @@ $(document).ready(function () {
       dataType: "json", // 需要 JSON 回應
       success: function (data) {
         console.log("本地資料請求成功", data);
-        allData = data; // 儲存完整資料
+        allData = data.data; // 儲存完整資料
 
         // 僅排序一次資料
         allData.sort(function (a, b) {
